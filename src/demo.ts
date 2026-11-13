@@ -1,6 +1,8 @@
 import { scenarios } from "./scenarios.js";
 
-const rows: string[][] = [["scenario", "naive: moved / recorded", "naive verdict", "hardened: moved / recorded", "hardened verdict"]];
+const rows: string[][] = [
+  ["scenario", "naive: moved / recorded", "naive verdict", "hardened: moved / recorded", "hardened verdict"],
+];
 for (const s of scenarios) {
   const cells = [s.name];
   for (const v of ["baseline", "hardened"] as const) {

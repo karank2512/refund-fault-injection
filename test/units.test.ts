@@ -16,7 +16,10 @@ test("provider: same idempotency key replays and moves nothing extra", async () 
 test("provider: key reused with other parameters is refused", async () => {
   const p = new FakeRefundProvider();
   await p.refund({ paymentId: "x", amountCents: 5, idempotencyKey: "k" });
-  await assert.rejects(p.refund({ paymentId: "x", amountCents: 6, idempotencyKey: "k" }), IdempotencyConflict);
+  await assert.rejects(
+    p.refund({ paymentId: "x", amountCents: 6, idempotencyKey: "k" }),
+    IdempotencyConflict,
+  );
 });
 
 test("provider: timeout_after_success really moves money", async () => {

@@ -28,7 +28,11 @@ const MAX_ATTEMPTS = 3;
  *     cannot count the money twice.
  *  4. reconcile() finishes any row left 'pending' by a crash or a run of provider errors.
  */
-export async function refundHardened(db: Db, provider: FakeRefundProvider, input: RefundInput): Promise<RefundResult> {
+export async function refundHardened(
+  db: Db,
+  provider: FakeRefundProvider,
+  input: RefundInput,
+): Promise<RefundResult> {
   const row = await reserve(db, input);
   if (!row) return { status: "rejected" };
   return drive(db, provider, row);
@@ -56,7 +60,8 @@ async function reserve(db: Db, input: RefundInput): Promise<RefundRow | null> {
         input.requestKey,
       ]);
       const existing = ex.rows[0]!;
-      if (existing.amount_cents !== input.amountCents) throw new KeyReuseError("request key reused with a different amount");
+      if (existing.amount_cents !== input.amountCents)
+        throw new KeyReuseError("request key reused with a different amount");
       return existing;
     });
   } catch (e) {
@@ -94,7 +99,10 @@ async function finalise(db: Db, row: RefundRow, ref: string): Promise<void> {
       [row.id, ref],
     );
     if (u.rows[0]) {
-      await tx.query("update payments set refunded_cents = refunded_cents + $2 where id=$1", [row.payment_id, row.amount_cents]);
+      await tx.query("update payments set refunded_cents = refunded_cents + $2 where id=$1", [
+        row.payment_id,
+        row.amount_cents,
+      ]);
     }
   });
 }

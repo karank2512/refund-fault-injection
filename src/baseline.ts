@@ -16,7 +16,11 @@ export type RefundResult = { status: "succeeded" | "pending" | "failed" | "rejec
  *  - retries a timed-out call with no idempotency key
  *  - provider call and DB write are not linked, so a crash between them loses the record
  */
-export async function refundBaseline(db: Db, provider: FakeRefundProvider, input: RefundInput): Promise<RefundResult> {
+export async function refundBaseline(
+  db: Db,
+  provider: FakeRefundProvider,
+  input: RefundInput,
+): Promise<RefundResult> {
   const p = await db.query<{ amount_cents: number; refunded_cents: number }>(
     "select amount_cents, refunded_cents from payments where id=$1",
     [input.paymentId],
@@ -38,6 +42,9 @@ export async function refundBaseline(db: Db, provider: FakeRefundProvider, input
     "insert into refunds (payment_id, request_key, amount_cents, status, provider_ref) values ($1,$2,$3,'succeeded',$4)",
     [input.paymentId, input.requestKey, input.amountCents, ref],
   );
-  await db.query("update payments set refunded_cents = refunded_cents + $2 where id=$1", [input.paymentId, input.amountCents]);
+  await db.query("update payments set refunded_cents = refunded_cents + $2 where id=$1", [
+    input.paymentId,
+    input.amountCents,
+  ]);
   return { status: "succeeded", providerRef: ref };
 }

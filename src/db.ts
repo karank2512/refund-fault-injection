@@ -40,7 +40,9 @@ export interface Snapshot {
 }
 
 export async function snapshot(db: Db, paymentId: string): Promise<Snapshot> {
-  const p = await db.query<{ refunded_cents: number }>("select refunded_cents from payments where id=$1", [paymentId]);
+  const p = await db.query<{ refunded_cents: number }>("select refunded_cents from payments where id=$1", [
+    paymentId,
+  ]);
   const r = await db.query<{ succeeded: string; pending: string; n: string }>(
     `select coalesce(sum(amount_cents) filter (where status='succeeded'),0) as succeeded,
             count(*) filter (where status='pending') as pending, count(*) as n

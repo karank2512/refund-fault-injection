@@ -43,7 +43,8 @@ export const scenarios: Scenario[] = [
   },
   {
     name: "crash-after-provider-call",
-    fault: "process dies after the provider moved money, before the database write; client retries after restart",
+    fault:
+      "process dies after the provider moved money, before the database write; client retries after restart",
     async run(v) {
       const w = await makeWorld(v);
       w.provider.inject("crash_after_success");

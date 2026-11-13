@@ -59,8 +59,10 @@ export async function judge(w: World, expectedMovedCents: number): Promise<Outco
   const movedCents = w.provider.totalMoved(w.paymentId);
   const violations: string[] = [];
   if (movedCents > w.paymentCents) violations.push(`refunded ${movedCents} on a ${w.paymentCents} payment`);
-  if (movedCents !== expectedMovedCents) violations.push(`provider moved ${movedCents}, expected ${expectedMovedCents}`);
-  if (movedCents !== db.succeededCents) violations.push(`provider moved ${movedCents} but database records ${db.succeededCents}`);
+  if (movedCents !== expectedMovedCents)
+    violations.push(`provider moved ${movedCents}, expected ${expectedMovedCents}`);
+  if (movedCents !== db.succeededCents)
+    violations.push(`provider moved ${movedCents} but database records ${db.succeededCents}`);
   if (db.pending > 0) violations.push(`${db.pending} refund(s) stuck pending`);
   return { movedCents, expectedMovedCents, db, violations };
 }
